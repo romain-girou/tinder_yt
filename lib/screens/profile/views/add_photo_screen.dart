@@ -30,7 +30,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
 				height: MediaQuery.of(context).size.height,
 				width: MediaQuery.of(context).size.width,
 				child: Padding(
-					padding: EdgeInsets.all(20),
+					padding: const EdgeInsets.all(20),
 					child: Column(
 						crossAxisAlignment: CrossAxisAlignment.start,
 						mainAxisAlignment: MainAxisAlignment.start,

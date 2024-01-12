@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_auth: ^4.10.0
+  # firebase_auth: ^4.10.0
   firebase_core: ^2.16.0
   cupertino_icons: ^1.0.6
   
@@ -25,6 +25,7 @@ dependencies:
 
   user_repository:
     path: packages/user_repository
+  geolocator: ^10.1.0
 
 dev_dependencies:
   flutter_test:

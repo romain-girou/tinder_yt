@@ -1,11 +1,12 @@
 import 'dart:io';
-
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
+import 'package:tinder_yt/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:tinder_yt/blocs/setup_data_bloc/setup_data_bloc.dart';
 import 'package:tinder_yt/screens/profile/views/add_photo_screen.dart';
-
 import '../../auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -16,12 +17,31 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-	List<String> newPhotos = [];
+	TextEditingController descriptionController = TextEditingController();
+
+  @override
+  void initState() {
+    descriptionController.text = context.read<AuthenticationBloc>().state.user!.description;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
 			backgroundColor: Theme.of(context).colorScheme.background,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            context.read<AuthenticationBloc>().state.user!.description = descriptionController.text;
+          });
+          print(context.read<AuthenticationBloc>().state.user!);
+
+          context.read<SetupDataBloc>().add(SetupRequired(
+            context.read<AuthenticationBloc>().state.user!
+          ));
+        },
+        child: const Icon(CupertinoIcons.check_mark, color: Colors.white,),
+      ),
 			appBar: AppBar(
 				backgroundColor: Theme.of(context).colorScheme.background,
 				elevation: 0,
@@ -70,12 +90,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 										itemBuilder: (context, i) {
 											return GestureDetector(
 												onTap: () async {
-													if(!(newPhotos.isNotEmpty && (i < newPhotos.length))) {
+                          
+													if(!(context.read<AuthenticationBloc>().state.user!.pictures.isNotEmpty 
+                            && (i < context.read<AuthenticationBloc>().state.user!.pictures.length))) {
 														var photos = await pushNewScreen(context, screen: const AddPhotoScreen());
 
 														if(photos != null && photos.isNotEmpty) {
 															setState(() {
-															  newPhotos.addAll(photos);
+															  context.read<AuthenticationBloc>().state.user!.pictures.addAll(photos);
 															});
 														}
 													}
@@ -84,16 +106,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
 													children: [
 														Padding(
 															padding: const EdgeInsets.all(5.0),
-															child: newPhotos.isNotEmpty && (i < newPhotos.length)
+															child: context.read<AuthenticationBloc>().state.user!.pictures.isNotEmpty && (i < context.read<AuthenticationBloc>().state.user!.pictures.length)
 																? Container(
 																		decoration: BoxDecoration(
 																			color: Colors.grey.shade300,
 																			borderRadius: BorderRadius.circular(8),
-																			image: DecorationImage(
-																				fit: BoxFit.cover,
-																				image: FileImage(
-																					File(newPhotos[i])
-																				)
+																			image: (context.read<AuthenticationBloc>().state.user!.pictures[i] as String).startsWith('https')
+                                        ? DecorationImage(
+																				    fit: BoxFit.cover,
+                                            image: NetworkImage(
+                                              context.read<AuthenticationBloc>().state.user!.pictures[i]
+                                            )
+																			    )
+                                        : DecorationImage(
+																				    fit: BoxFit.cover,
+                                            image: FileImage(
+                                              File(context.read<AuthenticationBloc>().state.user!.pictures[i])
+                                            ),
 																			),
 																		),
 																	)
@@ -124,11 +153,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 																		shape: BoxShape.circle,
 																	),
 																	child: Center(
-																		child: newPhotos.isNotEmpty && (i < newPhotos.length)
+																		child: context.read<AuthenticationBloc>().state.user!.pictures.isNotEmpty && (i < context.read<AuthenticationBloc>().state.user!.pictures.length)
 																			? GestureDetector(
 																					onTap: () {
 																						setState(() {
-																							newPhotos.remove(newPhotos[i]);
+																							context.read<AuthenticationBloc>().state.user!.pictures.remove(context.read<AuthenticationBloc>().state.user!.pictures[i]);
 																						});
 																					},
 																					child: Container(
@@ -191,6 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 							Container(
 								color: Colors.white,
 								child: TextFormField(
+                  controller: descriptionController,
 									maxLines: 10,
 									minLines: 1,
 									decoration: const InputDecoration(

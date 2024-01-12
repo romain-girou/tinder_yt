@@ -16,6 +16,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 	final passwordController = TextEditingController();
   final emailController = TextEditingController();
 	final nameController = TextEditingController();
+  final ageController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 	IconData iconPassword = CupertinoIcons.eye_fill;
 	bool obscurePassword = true;
@@ -224,6 +225,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
 											}
 										),
 									),
+                  const SizedBox(height: 10),
+									SizedBox(
+										width: MediaQuery.of(context).size.width * 0.9,
+										child: MyTextField(
+											controller: ageController,
+											hintText: 'Age',
+											obscureText: false,
+											keyboardType: TextInputType.name,
+											prefixIcon: const Icon(CupertinoIcons.checkmark_seal_fill),
+											validator: (val) {
+												if(val!.isEmpty) {
+													return 'Please fill in this field';													
+												} else if(val.length > 30) {
+													return 'Age too long';
+												}
+												return null;
+											}
+										),
+									),
 									SizedBox(height: MediaQuery.of(context).size.height * 0.02),
 									!signUpRequired
 										? SizedBox(
@@ -235,6 +255,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 															myUser = myUser.copyWith(
 																email: emailController.text,
 																name: nameController.text,
+                                age: int.parse(ageController.text),
 															);
 															setState(() {
 																context.read<SignUpBloc>().add(

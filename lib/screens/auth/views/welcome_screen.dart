@@ -49,17 +49,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
 								),
 							),
 							Align(
-								alignment: const AlignmentDirectional(-2.7, -1.2),
-								child: Container(
-									height: MediaQuery.of(context).size.width / 1.3,
-									width: MediaQuery.of(context).size.width / 1.3,
-									decoration: BoxDecoration(
-										shape: BoxShape.circle,
-										color: Theme.of(context).colorScheme.secondary
-									),
-								),
-							),
-							Align(
 								alignment: const AlignmentDirectional(2.7, -1.2),
 								child: Container(
 									height: MediaQuery.of(context).size.width / 1.3,
@@ -75,7 +64,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
 								child: Container(),
 							),
 							Align(
-								alignment: Alignment.bottomCenter,
+								alignment: Alignment.center,
 								child: SizedBox(
 									height: MediaQuery.of(context).size.height / 1.8,
 									child: Column(
